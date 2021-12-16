@@ -13,8 +13,25 @@ typedef struct LIST {
     DIRECTORY *tail;
 } LIST;
 
-void enqueue(DIRECTORY *directory, DIRECTORY *head) {
-    
+void enqueue(DIRECTORY *directory, LIST *list) {
+    if(list->head == NULL) {
+        list->head = directory;
+        list->tail = directory;
+    }
+    else{
+        list->tail->next = directory;
+        list->tail = directory;
+    }
+}
+
+DIRECTORY* dequeue(LIST *list) {
+    DIRECTORY *head;
+    if(list->head == NULL) {
+        return NULL;
+    }
+    head = list->head;
+    list->head = list->head->next;
+    return head;
 }
 
 int main(int argc, char** argv) {
