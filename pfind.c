@@ -4,6 +4,8 @@
 #include <dirent.h>
 #include <pthread.h>
 
+pthread_mutex_t lock;
+
 typedef struct DIRECTORY {
     char path[PATH_MAX];
     struct DIRECTORY *next;
@@ -14,7 +16,18 @@ typedef struct LIST {
     DIRECTORY *tail;
 } LIST;
 
-void enqueue(DIRECTORY *directory, LIST *list) {
+typedef struct THREAD {
+    int threadNum;
+    struct THREAD *next;
+} THREAD;
+
+typedef struct THREADSLIST {
+    THREAD *head;
+    THREAD *tail;
+} THREADSLIST;
+
+/*directories queue functions*/
+void enqueueD(DIRECTORY *directory, LIST *list) {
     if(list->head == NULL) {
         list->head = directory;
         list->tail = directory;
@@ -25,7 +38,7 @@ void enqueue(DIRECTORY *directory, LIST *list) {
     }
 }
 
-DIRECTORY* dequeue(LIST *list) {
+DIRECTORY* dequeueD(LIST *list) {
     DIRECTORY *head;
     if(list->head == NULL) {
         return NULL;
@@ -35,11 +48,26 @@ DIRECTORY* dequeue(LIST *list) {
     return head;
 }
 
-bool isEmpty(LIST *list) {
+/*threads queue functions*/
+void enqueueT(THREAD *thread, THREADSLIST *list) {
     if(list->head == NULL) {
-        return true;
+        list->head = thread;
+        list->tail = thread;
     }
-    return false;
+    else{
+        list->tail->next = thread;
+        list->tail = thread;
+    }
+}
+
+THREAD* dequeueT(THREADSLIST *list) {
+    THREAD *thread;
+    if(list->head == NULL) {
+        return NULL;
+    }
+    thread = list->head;
+    list->head = list->head->next;
+    return thread;
 }
 
 void searchValidate(char *directoryPath) { //can I crash the program without freeing all allocated memory?
@@ -51,10 +79,9 @@ void searchValidate(char *directoryPath) { //can I crash the program without fre
     }
 }
 
-
 int main(int argc, char** argv) {
     char *rootDirectory, *searchTerm;
-    int i, rc, numOfThreads;
+    int i, rc, numOfThreads, counter;   
     LIST *list;
     DIRECTORY *directory;
 
@@ -86,11 +113,20 @@ int main(int argc, char** argv) {
     list->head = NULL;
     list->tail = NULL;
 
-    enqueue(directory,list);
+    enqueueD(directory,list);
+
+    pthreat_t theardsArr[numOfThreads];
 
     for(i = 0; i < numOfThreads; i++) {
-        rc = pthread_create()
+        rc = pthread_create(&theardsArr[i], NULL, /*func*/, (void*)i);
+        if(rc) {
+            perror("pthread_create failed");
+            exit(1);
+        }
     }
+
+
+
 
 
 
