@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <dirent.h>
-
+#include <pthread.h>
 
 typedef struct DIRECTORY {
     char path[PATH_MAX];
@@ -54,7 +54,7 @@ void searchValidate(char *directoryPath) { //can I crash the program without fre
 
 int main(int argc, char** argv) {
     char *rootDirectory, *searchTerm;
-    int i,numOfThreads;
+    int i, rc, numOfThreads;
     LIST *list;
     DIRECTORY *directory;
 
@@ -88,7 +88,9 @@ int main(int argc, char** argv) {
 
     enqueue(directory,list);
 
-
+    for(i = 0; i < numOfThreads; i++) {
+        rc = pthread_create()
+    }
 
 
 
