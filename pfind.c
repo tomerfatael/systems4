@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <dirent.h>
 
 
 typedef struct DIRECTORY {
@@ -34,15 +35,68 @@ DIRECTORY* dequeue(LIST *list) {
     return head;
 }
 
+bool isEmpty(LIST *list) {
+    if(list->head == NULL) {
+        return true;
+    }
+    return false;
+}
+
+void searchValidate(char *directoryPath) { //can I crash the program without freeing all allocated memory?
+    DIR *dir;
+    dir = opendir(directoryPath);
+    if(dir == NULL) {
+        perror("Directory %s: Permission denied.\n", directoryPath);
+        exit(1);
+    }
+}
+
+
 int main(int argc, char** argv) {
     char *rootDirectory, *searchTerm;
     int i,numOfThreads;
+    LIST *list;
+    DIRECTORY *directory;
+
     if(argc != 4) {
         perror("invalid input");
         exit(1);
     }
     rootDirectory = argv[1];
     searchTerm = argv[2];
-    numOfThreads = argv[3];
+    numOfThreads = atoi(argv[3]);
+
+    searchValidate(rootDirectory);
+    
+    directory = (DIRECTORY*)malloc(sizeof(DIRECTORY));
+    if(directory == NULL) {
+        perror("malloc failed");
+        exit(1);
+    }
+
+    directory->path = rootDirectory;
+    directory->next = NULL;
+
+    list = (LIST*)malloc(sizeof(LIST));
+    if(list == NULL) {
+        perror("malloc failed");
+        exit(1);
+    }
+
+    list->head = NULL;
+    list->tail = NULL;
+
+    enqueue(directory,list);
+
+
+
+
+
+
+
+    
+
+
+
 
 }
