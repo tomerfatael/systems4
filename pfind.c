@@ -123,18 +123,8 @@ int main(int argc, char** argv) {
             perror("pthread_create failed");
             exit(1);
         }
+        
     }
-
-
-
-
-
-
-
-
-    
-
-
 
 
 }
