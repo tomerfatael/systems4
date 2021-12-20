@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <dirent.h>
 #include <pthread.h>
+#include <string.h>
 
 pthread_mutex_t lock;
 
@@ -74,7 +75,7 @@ void searchValidate(char *directoryPath) { //can I crash the program without fre
     DIR *dir;
     dir = opendir(directoryPath);
     if(dir == NULL) {
-        perror("Directory %s: Permission denied.\n", directoryPath);
+        perror("Directory %s: Permission denied.\n", directoryPath); //fix
         exit(1);
     }
 }
@@ -101,7 +102,7 @@ int main(int argc, char** argv) {
         exit(1);
     }
 
-    directory->path = rootDirectory;
+    strcpy(directory->path, rootDirectory);
     directory->next = NULL;
 
     list = (LIST*)malloc(sizeof(LIST));
